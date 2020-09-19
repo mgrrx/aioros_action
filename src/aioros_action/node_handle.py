@@ -48,7 +48,7 @@ def run_until_complete(
     tcpros_port: int = 0,
     unixros_path: Optional[Path] = None,
     node_handle_cls: Type[aioros.NodeHandle] = NodeHandle,
-) -> None:
+) -> int:
     return aioros.run_until_complete(
         func,
         node_name,
