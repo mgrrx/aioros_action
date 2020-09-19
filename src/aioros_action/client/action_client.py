@@ -1,4 +1,4 @@
-from asyncio import sleep
+from asyncio import gather
 from typing import Callable
 from typing import Dict
 from typing import NamedTuple
@@ -87,12 +87,11 @@ class ActionClient:
         self._node_handle = None
 
     async def wait_for_server(self):
-        while not all((self._pub_goal.topic.has_connected_subscribers,
-                       self._pub_cancel.topic.has_connected_subscribers,
-                       self._sub_feedback.topic.has_connected_publishers,
-                       self._sub_result.topic.has_connected_publishers,
-                       self._sub_status.topic.has_connected_publishers)):
-            await sleep(0.1)
+        await gather(self._pub_goal.wait_for_subscribers(),
+                     self._pub_cancel.wait_for_subscribers(),
+                     self._sub_feedback.wait_for_publishers(),
+                     self._sub_result.wait_for_publishers(),
+                     self._sub_status.wait_for_publishers())
 
     def send_goal(
         self,
